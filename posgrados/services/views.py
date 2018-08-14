@@ -130,10 +130,11 @@ def genCo(request):
     dia = datetime.date.today().day
     mes = datetime.date.today().month
     lista=[]
-    for i in range(1,cantidad):
+    for i in range(1,cantidad+1):
         hora = datetime.datetime.now().hour
         minuto = datetime.datetime.now().minute
-        cod = str(anio)+"p0sgr4"+str(dia)+str(i)+str(mes)+"UES"+str(hora)+str(minuto)
+        segundo = datetime.datetime.now().second
+        cod = str(anio)+"p0sgr4"+str(dia)+str(i)+str(mes)+"UES"+str(hora)+str(minuto)+str(segundo)
         c= Validacion.objects.create(codigo=cod, vigencia=fecha, activo=True, impreso=False)
         jsonCode = {
             "id":c.id_codigo,
