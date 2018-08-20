@@ -8,7 +8,7 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.response import Response
 from .models import  Noticia, Aspirante,Image, Validacion
 from rest_framework.authtoken.models import Token
-import json,datetime
+import json,datetime,time, random
 from django.core import serializers
 
 class PermissionMixinAPICreate(mixins.CreateModelMixin, generics.ListAPIView):
@@ -130,16 +130,20 @@ def genCo(request):
     dia = datetime.date.today().day
     mes = datetime.date.today().month
     lista=[]
-    for i in range(1,cantidad+1):
+    for i in range(0,cantidad):
         hora = datetime.datetime.now().hour
         minuto = datetime.datetime.now().minute
         segundo = datetime.datetime.now().second
-        cod = str(anio)+"p0sgr4"+str(dia)+str(i)+str(mes)+"UES"+str(hora)+str(minuto)+str(segundo)
+        randomNumber=random.randint(1,99999)
+        cod = str(anio)+"p0sgr4"+str(dia)+str(i)+str(mes)+"UES"+str(randomNumber)
+        while (Validacion.objects.filter(codigo=cod).exists()):
+            print("exception")
+            randomNumber=random.randint(1,999999)
         c= Validacion.objects.create(codigo=cod, vigencia=fecha, activo=True, impreso=False)
-        jsonCode = {
-            "id":c.id_codigo,
-            "codigo":c.codigo,
-            "vigencia":c.vigencia
+        jsonCode ={
+            'id':c.id_codigo,
+            'codigo':c.codigo,
+            'vigencia':c.vigencia
         }
         lista.append(jsonCode)
     content = {'Guardado': True, "codigos": lista}
@@ -154,6 +158,21 @@ def impCod(request):
         Validacion.objects.filter(id_codigo=id).update(impreso=True)
     content = {'Actualizado': True}
     return Response(content, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes((AllowAny, ))
+def validarCodigo(request):
+    data = json.loads(request.body)
+    codigo = data["codigo"]
+    if (Validacion.objects.filter(codigo=codigo).exists()):
+        v=Validacion.objects.get(codigo=codigo)
+        content = {'existe': True, 'id':v.id_codigo}
+        estado = status.HTTP_200_OK
+    else:
+        content = {'existe': False}
+        estado = status.HTTP_404_NOT_FOUND
+    return Response(content, status=estado)
+
 
 class AspiranteAPICreate(mixins.CreateModelMixin, generics.ListAPIView):
     authentication_classes = (TokenAuthentication,)
