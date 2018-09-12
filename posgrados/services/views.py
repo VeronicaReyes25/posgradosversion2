@@ -8,7 +8,7 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.response import Response
 from .models import  Noticia, Aspirante,Image, Validacion
 from rest_framework.authtoken.models import Token
-import json,datetime,time, random
+import json,datetime,time, random, cloudinary
 from django.core import serializers
 
 class PermissionMixinAPICreate(mixins.CreateModelMixin, generics.ListAPIView):
@@ -93,7 +93,7 @@ class GroupAPICreateView(mixins.CreateModelMixin,generics.ListAPIView):
 class Usuario2APICreateView(mixins.CreateModelMixin,generics.ListAPIView):
     #authentication_classes = (TokenAuthentication,)
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
     lookup_field = 'id'
     serializer_class = UserSerializer
 
@@ -172,6 +172,21 @@ def validarCodigo(request):
         content = {'existe': False}
         estado = status.HTTP_404_NOT_FOUND
     return Response(content, status=estado)
+
+@api_view(['POST'])
+@permission_classes((AllowAny, ))
+def crearNoticias(request):
+    data = json.loads(request.body)
+    respon= cloudinary.uploader.upload(data["foto"])
+    n= Noticia.objects.create(emcabezado=data["encabezado"],
+    cuerpo=data["cuerpo"],
+    fecha=data["fechas"],
+    id_user_id=data["idUsuario"],
+    imagenUrl=respon["url"])
+    content = {'guardado': True}
+    return Response(content, status=status.HTTP_201_CREATED)
+
+
 
 
 class AspiranteAPICreate(mixins.CreateModelMixin, generics.ListAPIView):

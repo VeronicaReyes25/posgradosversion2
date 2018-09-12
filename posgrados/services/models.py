@@ -16,6 +16,7 @@ class Noticia (models.Model) :
     null=True,)
     fecha = models.DateField(auto_now=True)
     imagen = models.CharField(max_length=250, blank=True)
+    imagenUrl = models.TextField(blank=True)
 
     def __str__(self):
         return str(self.emcabezado)
