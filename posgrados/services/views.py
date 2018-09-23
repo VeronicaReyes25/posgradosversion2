@@ -188,8 +188,8 @@ def crearNoticias(request):
     cuerpo=data["cuerpo"],
     fecha=data["fechas"],
     id_user_id=data["idUsuario"],
-    imagenUrl=noti.url)
-    content = {'guardado': True, 'noti':noti}
+    imagenUrl=noti.json()["url"])
+    content = {'guardado': True}
     return Response(content, status=status.HTTP_201_CREATED)
 
 
