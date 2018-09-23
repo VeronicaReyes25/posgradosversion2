@@ -8,7 +8,7 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.response import Response
 from .models import  Noticia, Aspirante,Image, Validacion
 from rest_framework.authtoken.models import Token
-import json,datetime,time, random, cloudinary
+import json,datetime,time, random, requests, hashlib, calendar
 from django.core import serializers
 
 class PermissionMixinAPICreate(mixins.CreateModelMixin, generics.ListAPIView):
@@ -177,13 +177,19 @@ def validarCodigo(request):
 @permission_classes((AllowAny, ))
 def crearNoticias(request):
     data = json.loads(request.body)
-    respon= cloudinary.uploader.upload(data["foto"])
-    n= Noticia.objects.create(emcabezado=data["encabezado"],
+    apiKey = "435794978697618"
+    apiSecret = "hzyKk4HoLpb_O8gTqhaYPc0FGiY"
+    timestamp = calendar.timegm(time.gmtime())
+    sign = "timestamp="+str(timestamp)+apiSecret
+    signature = hashlib.sha1(sign.encode('utf-8')).hexdigest()
+    noti= requests.post("https://api.cloudinary.com/v1_1/ddjmdjmvk/image/upload", data={'file':data["foto"], 'api_key':apiKey, 'timestamp':timestamp, 'signature':signature})
+    print (noti)
+    Noticia.objects.create(emcabezado=data["encabezado"],
     cuerpo=data["cuerpo"],
     fecha=data["fechas"],
     id_user_id=data["idUsuario"],
-    imagenUrl=respon["url"])
-    content = {'guardado': True}
+    imagenUrl=noti.url)
+    content = {'guardado': True, 'noti':noti}
     return Response(content, status=status.HTTP_201_CREATED)
 
 

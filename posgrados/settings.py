@@ -27,11 +27,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['postgradosv2.herokuapp.com', '127.0.0.1', '127.0.0.1:4200' ]
 
-CLOUDINARY = {
-  'cloud_name': 'ddjmdjmvk',  
-  'api_key': '435794978697618',  
-  'api_secret': 'hzyKk4HoLpb_O8gTqhaYPc0FGiY',  
-}
+#CLOUDINARY = {
+#  'cloud_name': 'ddjmdjmvk',  
+#  'api_key': '435794978697618',  
+#  'api_secret': 'hzyKk4HoLpb_O8gTqhaYPc0FGiY',  
+#}
 
 # Application definition
 
@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'posgrados.services',
     'rest_framework.authtoken',
     'corsheaders',
-    'cloudinary',
+ #   'cloudinary',
 
 ]
 CORS_ORIGIN_ALLOW_ALL = True
