@@ -6,10 +6,11 @@ from .serializers import UserSerializer, ImgSerializer,RolUsuariosSerializer,Use
 from rest_framework import status, viewsets, generics, mixins
 from rest_framework.decorators import api_view, permission_classes, authentication_classes, action
 from rest_framework.response import Response
-from .models import  Noticia, Aspirante,Image, Validacion
+from .models import  Noticia, Aspirante,Image, Validacion, Cita
 from rest_framework.authtoken.models import Token
 import json,datetime,time, random, requests, hashlib, calendar
 from django.core import serializers
+from datetime import datetime
 
 class PermissionMixinAPICreate(mixins.CreateModelMixin, generics.ListAPIView):
     permission_classes = (AllowAny,)
@@ -226,3 +227,58 @@ def imageApi(request):
             return Response(ruta, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes((AllowAny, ))
+def agendarCita(request):
+    data = json.loads(request.body)
+    evento =data["evento"]
+    descripcion=data["descripcion"]
+    lugar=data["lugar"]
+    diaCompleto=data["diaCompleto"]
+    ##Fecha inicio
+    fechaHoraInicio=datetime.strptime(data["FechaHoraInicio"], "%d/%m/%y %H:%M:%S")
+    fechaInicio=fechaHoraInicio.strftime("%d/%m/%y")
+    horaInicio=fechaHoraInicio.strftime("%H:%M:%S")
+    ##Fecha fin
+    fechaHoraFin=datetime.strptime(data["FechaHoraFin"], "%d/%m/%y %H:%M:%S")
+    citaPara=data["citaPara"]
+    citaCon=data["citaCon"]
+    nombrePara=data["nombrePara"]
+    nombreCon=data["nombreCon"]
+            
+    if (nombrePara is None and nombreCon is None and citaPara is None and citaCon is None):
+        content = {'mensaje': 'No se puede agendar sin registrar los nombres de las entidades'}
+        return Response(content, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        if (citaPara==citaCon):
+            content = {'mensaje': 'No se puede agendar citas al mismo usuario'}
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+        if (diaCompleto==True):
+            fechaHoraInicio=datetime.strptime(fechaInicio+" 00:00:00","%d/%m/%y %H:%M:%S")
+            fechaHoraFin=datetime.strptime(fechaInicio+" 23:59:59","%d/%m/%y %H:%M:%S")
+        
+        userPara = User.objects.get(id=data["citaPara"])
+        userCon = User.objects.get(id=data["citaCon"])
+        
+        c=Cita.objects.get_or_create(titulo=evento,
+        descripcion=descripcion,
+        fecha_hora_inicio=fechaHoraInicio,
+        fecha_hora_fin=fechaHoraFin,
+        lugar=lugar,
+        nombre_para=nombrePara,
+        nombre_con=nombreCon,
+        cancelado=False,
+        dia_completo=diaCompleto,
+        id_user_para=userPara,
+        id_user_con=userCon)
+        
+        if (c[1]==False):
+            content = {'mensaje':'Cita previamente guardada'}
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            content = {'guardado':True}
+            return Response(content, status=status.HTTP_201_CREATED)
+        
+
+    

@@ -26,7 +26,8 @@ urlpatterns = [
     url(r'^imagen/$', views.imageApi, name='imagen'),
     url(r'^generarCodigos/$', views.genCo, name='genCod'),
     url(r'^imprimirCodigos/$', views.impCod, name='impCod'),
-    url(r'^validarCodigo/$',views.validarCodigo, name='validar-codigo')
+    url(r'^validarCodigo/$',views.validarCodigo, name='validar-codigo'),
+    url(r'^citas/crear/$',views.agendarCita, name='agendar-cita')
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
