@@ -90,9 +90,9 @@ WSGI_APPLICATION = 'posgrados.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'yaesehzt',
-        'USER' : 'yaesehzt',
-        'PASSWORD' : 'tA8FngqtJ3-KQKfFvbHlyPoAGM723IKb',
+        'NAME': 'gqfloanr',
+        'USER' : 'gqfloanr',
+        'PASSWORD' : 'Ow85Vi2K4cCR1UiKHpbHMhDKwkm2NBlt',
         'HOST': 'pellefant.db.elephantsql.com',
         'POT' : '5432',
     }
