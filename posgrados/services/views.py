@@ -178,13 +178,13 @@ def validarCodigo(request):
 @permission_classes((AllowAny, ))
 def crearNoticias(request):
     data = json.loads(request.body)
-    apiKey = "435794978697618"
-    apiSecret = "hzyKk4HoLpb_O8gTqhaYPc0FGiY"
+    apiKey = "217796461126348"
+    apiSecret = "INJTRbK_mh3rfqIXblwJd8tz5LQ"
     timestamp = calendar.timegm(time.gmtime())
     sign = "timestamp="+str(timestamp)+apiSecret
     signature = hashlib.sha1(sign.encode('utf-8')).hexdigest()
-    noti= requests.post("https://api.cloudinary.com/v1_1/ddjmdjmvk/image/upload", data={'file':data["foto"], 'api_key':apiKey, 'timestamp':timestamp, 'signature':signature})
-    print (noti)
+    noti= requests.post("https://api.cloudinary.com/v1_1/dhbegt4ry/image/upload", data={'file':data["foto"], 'api_key':apiKey, 'timestamp':timestamp, 'signature':signature})
+    ##print (noti)
     Noticia.objects.create(emcabezado=data["encabezado"],
     cuerpo=data["cuerpo"],
     fecha=data["fechas"],
